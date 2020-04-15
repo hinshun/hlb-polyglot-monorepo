@@ -6,18 +6,18 @@ import npm from fs {
 	image "openllb/npm.hlb"
 }
 
-fs default() {
-	scratch
-	copy goproj "/out/hello" "hello"
-	copy nodeproj "/" "node_modules"
+group default() {
+	parallel goproj nodeproj
 }
 
 fs goproj() {
 	docker.build fs { localContext "./goproj"; } fs { localDockerfile "./goproj"; }
+	download "./goproj/bin"
 }
 
 fs nodeproj() {
 	npm.nodeModules fs { localContext "./nodeproj"; }
+	download "./nodeproj/node_modules"
 }
 
 fs localContext(string dir) {
